@@ -28,7 +28,7 @@ export const Route = createFileRoute("/email")({
       },
     ],
   }),
-  component: EmailPage;
+  component: EmailPage,
 });
 
 const TONES = ["Formal", "Friendly", "Persuasive"] as const;
