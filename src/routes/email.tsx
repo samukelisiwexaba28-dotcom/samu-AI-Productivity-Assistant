@@ -47,7 +47,13 @@ function EmailPage() {
 
   const run = useServerFn(generateEmail);
   const mutation = useMutation({
-    mutationFn: (input: Parameters<typeof generateEmail>[0]["data"]) => run({ data: input }),
+    mutationFn: (input: {
+      brief: string;
+      tone: (typeof TONES)[number];
+      recipient?: string;
+      sender?: string;
+    }) => run({ data: input }),
+
     onSuccess: (result) => {
       setDraft(result);
       setSubject(result.subjectLines[0] ?? "");
