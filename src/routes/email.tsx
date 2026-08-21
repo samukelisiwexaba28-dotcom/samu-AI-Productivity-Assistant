@@ -50,8 +50,9 @@ function EmailPage() {
     mutationFn: (input: {
       brief: string;
       tone: (typeof TONES)[number];
-      recipient?: string;
-      sender?: string;
+      recipient?: string | undefined;
+      sender?: string | undefined;
+
     }) => run({ data: input }),
 
     onSuccess: (result) => {
