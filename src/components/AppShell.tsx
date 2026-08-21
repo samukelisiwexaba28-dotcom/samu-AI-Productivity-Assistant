@@ -1,0 +1,162 @@
+import { Link } from "@tanstack/react-router";
+import {
+  Bell,
+  CalendarClock,
+  LayoutDashboard,
+  Mail,
+  Menu,
+  NotebookPen,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
+import { useState, type ReactNode } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+
+const NAV = [
+  { to: "/", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/email", label: "Email Generator", icon: Mail },
+  { to: "/notes", label: "Meeting Notes", icon: NotebookPen },
+  { to: "/planner", label: "Task Planner", icon: CalendarClock },
+  { to: "/responsible-ai", label: "Responsible AI", icon: ShieldCheck },
+] as const;
+
+function NavList({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <nav aria-label="Main navigation" className="flex flex-col gap-1">
+      {NAV.map(({ to, label, icon: Icon }) => (
+        <Link
+          key={to}
+          to={to}
+          onClick={onNavigate}
+          activeOptions={{ exact: to === "/" }}
+          className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-accent-foreground"
+        >
+          <Icon className="size-4.5 shrink-0" aria-hidden="true" />
+          {label}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+function Brand() {
+  return (
+    <div className="flex items-center gap-2.5">
+      <span className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
+        <Sparkles className="size-5" aria-hidden="true" />
+      </span>
+      <span className="leading-tight">
+        <span className="block font-display text-sm font-bold text-sidebar-foreground">
+          Flowdesk AI
+        </span>
+        <span className="block text-xs text-sidebar-foreground/60">Productivity suite</span>
+      </span>
+    </div>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen lg:flex">
+      <aside className="hidden w-64 shrink-0 flex-col justify-between bg-sidebar p-4 lg:sticky lg:top-0 lg:flex lg:h-screen">
+        <div className="space-y-8">
+          <Brand />
+          <NavList />
+        </div>
+        <p className="rounded-lg bg-sidebar-accent/60 p-3 text-xs text-sidebar-foreground/70">
+          AI drafts are starting points. Review every output before you share it.
+        </p>
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/85 px-4 py-3 backdrop-blur sm:px-6">
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu">
+                <Menu className="size-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-72 bg-sidebar p-4">
+              <SheetTitle className="sr-only">Navigation</SheetTitle>
+              <div className="space-y-8">
+                <Brand />
+                <NavList onNavigate={() => setOpen(false)} />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-display text-sm font-semibold">AI Productivity Dashboard</p>
+            <p className="truncate text-xs text-muted-foreground">
+              Draft, summarize and plan — with a human in the loop
+            </p>
+          </div>
+
+          <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
+            <Bell className="size-5" />
+            <span className="absolute right-2 top-2 size-2 rounded-full bg-primary" />
+          </Button>
+          <div className="flex items-center gap-2 rounded-full border border-border bg-card py-1 pl-1 pr-3">
+            <span className="flex size-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+              SM
+            </span>
+            <span className="hidden text-xs font-medium sm:block">Samukelisiwe</span>
+          </div>
+        </header>
+
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+
+        <footer className="border-t border-border bg-card px-4 py-6 text-xs leading-relaxed text-muted-foreground sm:px-6 lg:px-8">
+          <p className="flex items-center gap-2 font-medium text-foreground">
+            <ShieldCheck className="size-4 text-primary" aria-hidden="true" />
+            Responsible AI notice
+          </p>
+          <p className="mt-2 max-w-3xl">
+            Outputs are generated by a large language model and can be incomplete, outdated or
+            biased. Nothing is sent, scheduled or shared automatically — you confirm every action.
+            Avoid pasting confidential or personal data, and always verify facts, names and dates
+            before external use.{" "}
+            <Link to="/responsible-ai" className="font-medium text-primary underline">
+              Read how we use AI
+            </Link>
+            .
+          </p>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+export function PageHeading({
+  eyebrow,
+  title,
+  description,
+  className,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("mb-6 max-w-3xl", className)}>
+      <p className="text-xs font-semibold uppercase tracking-widest text-primary">{eyebrow}</p>
+      <h1 className="mt-1.5 text-2xl font-bold sm:text-3xl">{title}</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+
+export function AIDisclaimer({ text }: { text: string }) {
+  return (
+    <p className="mt-4 rounded-lg border border-border bg-muted/60 p-3 text-xs text-muted-foreground">
+      <ShieldCheck className="mr-1.5 inline size-3.5 text-primary" aria-hidden="true" />
+      {text}
+    </p>
+  );
+}
